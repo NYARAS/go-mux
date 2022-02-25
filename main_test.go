@@ -1,14 +1,12 @@
-package main_test
+package main
 
 import (
 	"log"
 	"os"
 	"testing"
-
-	"github.com/NYARAS/gomux/main"
 )
 
-var a main.App
+var a App
 
 func TestMain(m *testing.M) {
 	a.Initialize(

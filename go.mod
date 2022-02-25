@@ -1,4 +1,4 @@
-module github.com/NYARAS/gomux
+module github.com/NYARAS/go-mux
 
 go 1.17
 
