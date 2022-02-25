@@ -86,3 +86,23 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, products)
 }
+
+func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
+	var p Product
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&p)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := p.createProduct(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, p)
+}
