@@ -1,13 +1,14 @@
 package main
 
-import "os"
+import (
+	"github.com/NYARAS/go-mux/app"
+	"github.com/NYARAS/go-mux/config"
+)
 
 func main() {
-	a := App{}
-	a.Initialize(
-		os.Getenv("APP_DB_USERNAME"),
-		os.Getenv("APP_DB_PASSWORD"),
-		os.Getenv("APP_DB_NAME"))
+	config := config.GetConfig()
 
-	a.Run(":8010")
+	app := &app.App{}
+	app.Initialize(config)
+	app.Run(":3000")
 }
