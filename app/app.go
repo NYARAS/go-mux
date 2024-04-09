@@ -39,8 +39,12 @@ func (a *App) Initialize(config *config.Config) {
 
 // Set all required routers
 func (a *App) setRouters() {
+	// Routing for handling the projects
+	a.Get("/employees", a.GetAllEmployees)
+	a.Post("/employees", a.CreateEmployee)
 	a.Post("/products", a.CreateProduct)
 	a.Get("/products", a.GetAllProducts)
+	a.Get("/secret", a.GetSecret)
 }
 
 // Wrap the router for GET method
@@ -63,7 +67,14 @@ func (a *App) Delete(path string, f func(w http.ResponseWriter, r *http.Request)
 	a.Router.HandleFunc(path, f).Methods("DELETE")
 }
 
-// Handlers to manage Prodcut Data
+// Handlers to manage Employee Data
+func (a *App) GetAllEmployees(w http.ResponseWriter, r *http.Request) {
+	handler.GetAllEmployees(a.DB, w, r)
+}
+
+func (a *App) CreateEmployee(w http.ResponseWriter, r *http.Request) {
+	handler.CreateEmployee(a.DB, w, r)
+}
 func (a *App) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	handler.CreateProduct(a.DB, w, r)
 }
@@ -72,7 +83,10 @@ func (a *App) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	handler.GetAllProducts(a.DB, w, r)
 }
 
-// Run the app on it's router
+func (a *App) GetSecret(w http.ResponseWriter, r *http.Request) {
+	handler.GetSecret(w, r)
+}
+
 func (a *App) Run(host string) {
 	log.Fatal(http.ListenAndServe(host, a.Router))
 }
