@@ -14,6 +14,6 @@ type Employee struct {
 }
 
 type SecretResponse struct {
-	AccessKey       string            `json:"accesskey"`
-	SecretAccessKey map[string]string `json:"secretaccesskey"`
+	AccessKey       string `json:"accesskey"`
+	SecretAccessKey string `json:"secretaccesskey"`
 }
