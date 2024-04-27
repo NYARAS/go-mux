@@ -1,38 +1,20 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/NYARAS/go-mux/config"
 	"github.com/NYARAS/go-mux/handler"
-	"github.com/NYARAS/go-mux/model"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 )
 
 // App has router and db instances
 type App struct {
 	Router *mux.Router
-	DB     *gorm.DB
 }
 
 // App initialize with predefined configuration
-func (a *App) Initialize(config *config.Config) {
-	dbURI := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable",
-		config.DB.Host,
-		config.DB.Port,
-		config.DB.Username,
-		config.DB.Name,
-		config.DB.Password)
-
-	db, err := gorm.Open(config.DB.Dialect, dbURI)
-	if err != nil {
-		log.Fatal("Could not connect database")
-	}
-
-	a.DB = model.DBMigrate(db)
+func (a *App) Initialize() {
 	a.Router = mux.NewRouter()
 	a.setRouters()
 }
@@ -40,10 +22,6 @@ func (a *App) Initialize(config *config.Config) {
 // Set all required routers
 func (a *App) setRouters() {
 	// Routing for handling the projects
-	a.Get("/employees", a.GetAllEmployees)
-	a.Post("/employees", a.CreateEmployee)
-	a.Post("/products", a.CreateProduct)
-	a.Get("/products", a.GetAllProducts)
 	a.Get("/secret", a.GetSecret)
 }
 
@@ -65,22 +43,6 @@ func (a *App) Put(path string, f func(w http.ResponseWriter, r *http.Request)) {
 // Wrap the router for DELETE method
 func (a *App) Delete(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("DELETE")
-}
-
-// Handlers to manage Employee Data
-func (a *App) GetAllEmployees(w http.ResponseWriter, r *http.Request) {
-	handler.GetAllEmployees(a.DB, w, r)
-}
-
-func (a *App) CreateEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.CreateEmployee(a.DB, w, r)
-}
-func (a *App) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	handler.CreateProduct(a.DB, w, r)
-}
-
-func (a *App) GetAllProducts(w http.ResponseWriter, r *http.Request) {
-	handler.GetAllProducts(a.DB, w, r)
 }
 
 func (a *App) GetSecret(w http.ResponseWriter, r *http.Request) {
