@@ -14,33 +14,10 @@ ENV GIN_MODE release
 COPY . .
 
 # Build the binary.
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o server github.com/NYARAS/go-mux
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/server github.com/NYARAS/go-mux
 
 FROM debian:bullseye-slim AS production
 
-# Install necessary libraries for wkhtmltopdf.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wkhtmltopdf \
-    libstdc++6 \
-    libx11-6 \
-    libxrender1 \
-    libxext6 \
-    libfontconfig1 \
-    fonts-dejavu \
-    fonts-droid-fallback \
-    fonts-freefont-ttf \
-    fonts-liberation \
-    libqt5webkit5 \
-    libqt5widgets5 \
-    libqt5gui5 \
-    libqt5core5a \
-    libqt5network5 \
-    ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY --from=builder /app/server /server
 
-WORKDIR /app
-
-CMD ["/server"]
+ENTRYPOINT ["./server"]
